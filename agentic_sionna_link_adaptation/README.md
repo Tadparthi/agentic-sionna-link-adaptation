@@ -59,7 +59,7 @@ Results are saved in `results/`:
 
 Open the live interactive block diagram here:
 
-https://YOUR_USERNAME.github.io/agentic-sionna-link-adaptation/
+https://Tadparthi.github.io/agentic-sionna-link-adaptation/
 
 The diagram explains the full project flow:
 
