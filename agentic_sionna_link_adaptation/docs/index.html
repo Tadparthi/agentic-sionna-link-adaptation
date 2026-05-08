@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic Sionna Link Adaptation Mini-Lab</title>
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --ink: #0f172a;
+      --muted: #475569;
+      --panel: #ffffff;
+      --blue: #0ea5e9;
+      --purple: #7c3aed;
+      --green: #16a34a;
+      --orange: #f97316;
+      --red: #e11d48;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.16), transparent 35%),
+        radial-gradient(circle at top right, rgba(225, 29, 72, 0.13), transparent 35%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 34px 24px 44px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 62px);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      color: #08122f;
+    }
+
+    .hero p {
+      margin: 12px auto 0;
+      max-width: 1050px;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 650;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 22px 0 12px;
+    }
+
+    .pill {
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      background: rgba(255, 255, 255, 0.8);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 750;
+      color: #334155;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: 1fr 70px 1.15fr 70px 1.05fr 70px 1.25fr 70px 1.02fr;
+      align-items: stretch;
+      gap: 0;
+      margin-top: 24px;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 640px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.55;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.65), transparent 40%),
+        radial-gradient(circle at top right, rgba(255,255,255,0.6), transparent 35%);
+    }
+
+    .stage-header {
+      position: relative;
+      color: #fff;
+      padding: 18px 20px;
+      font-size: 21px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+    }
+
+    .stage-body {
+      position: relative;
+      padding: 20px 18px 18px;
+    }
+
+    .stage.purple { border-color: rgba(124, 58, 237, 0.25); }
+    .stage.purple .stage-header { background: linear-gradient(135deg, #6d28d9, #9333ea); }
+    .stage.purple { background: linear-gradient(180deg, rgba(245, 240, 255, 0.92), rgba(255,255,255,0.88)); }
+
+    .stage.blue { border-color: rgba(14, 165, 233, 0.25); }
+    .stage.blue .stage-header { background: linear-gradient(135deg, #0369a1, #0ea5e9); }
+    .stage.blue { background: linear-gradient(180deg, rgba(235, 248, 255, 0.95), rgba(255,255,255,0.9)); }
+
+    .stage.green { border-color: rgba(22, 163, 74, 0.25); }
+    .stage.green .stage-header { background: linear-gradient(135deg, #166534, #22c55e); }
+    .stage.green { background: linear-gradient(180deg, rgba(236, 253, 245, 0.95), rgba(255,255,255,0.9)); }
+
+    .stage.orange { border-color: rgba(249, 115, 22, 0.27); }
+    .stage.orange .stage-header { background: linear-gradient(135deg, #c2410c, #f97316); }
+    .stage.orange { background: linear-gradient(180deg, rgba(255, 247, 237, 0.95), rgba(255,255,255,0.9)); }
+
+    .stage.red { border-color: rgba(225, 29, 72, 0.27); }
+    .stage.red .stage-header { background: linear-gradient(135deg, #be123c, #f43f5e); }
+    .stage.red { background: linear-gradient(180deg, rgba(255, 241, 242, 0.96), rgba(255,255,255,0.9)); }
+
+    .box {
+      position: relative;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 17px;
+      padding: 14px 14px;
+      margin-bottom: 14px;
+      min-height: 72px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px rgba(15, 23, 42, 0.14);
+    }
+
+    .purple .box:hover { border-color: rgba(124, 58, 237, 0.42); }
+    .blue .box:hover { border-color: rgba(14, 165, 233, 0.42); }
+    .green .box:hover { border-color: rgba(22, 163, 74, 0.42); }
+    .orange .box:hover { border-color: rgba(249, 115, 22, 0.42); }
+    .red .box:hover { border-color: rgba(225, 29, 72, 0.42); }
+
+    .icon {
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+    }
+
+    .purple .icon { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+    .blue .icon { background: linear-gradient(135deg, #0284c7, #38bdf8); }
+    .green .icon { background: linear-gradient(135deg, #15803d, #4ade80); }
+    .orange .icon { background: linear-gradient(135deg, #ea580c, #fb923c); }
+    .red .icon { background: linear-gradient(135deg, #e11d48, #fb7185); }
+
+    .box-text strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .box-text span {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .note {
+      margin-top: 16px;
+      border-top: 2px dashed rgba(15, 23, 42, 0.13);
+      padding-top: 17px;
+      color: var(--muted);
+      font-weight: 750;
+      font-size: 14px;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .down-arrow {
+      font-size: 22px;
+      font-weight: 900;
+      opacity: 0.85;
+      color: #0284c7;
+      animation: floatY 1.3s infinite ease-in-out;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .profile {
+      min-height: 72px;
+      justify-content: center;
+      text-align: center;
+      padding: 13px 10px;
+      margin: 0;
+    }
+
+    .profile .box-text strong {
+      font-size: 17px;
+      line-height: 1.15;
+    }
+
+    .result-card {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(225, 29, 72, 0.18);
+      box-shadow: 0 18px 36px rgba(225, 29, 72, 0.12);
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .star {
+      width: 80px;
+      height: 80px;
+      margin: 2px auto 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle, rgba(255,255,255,0.98), rgba(255,228,230,0.92));
+      color: var(--red);
+      font-size: 42px;
+      box-shadow:
+        0 0 0 10px rgba(225, 29, 72, 0.06),
+        0 0 38px rgba(225, 29, 72, 0.32);
+      animation: pulse 1.9s infinite ease-in-out;
+    }
+
+    .metric {
+      padding: 15px 0;
+      border-top: 1px dashed rgba(225, 29, 72, 0.27);
+    }
+
+    .metric:first-of-type { border-top: none; }
+
+    .metric-label {
+      font-size: 13px;
+      color: #334155;
+      font-weight: 850;
+    }
+
+    .metric-value {
+      margin-top: 5px;
+      font-size: 24px;
+      color: var(--red);
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    .flow {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 640px;
+    }
+
+    .flow-line {
+      position: absolute;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .flow-line::before,
+    .flow-line::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 26px;
+      height: 100%;
+      border-radius: 999px;
+      background: currentColor;
+      animation: moveDot 1.6s infinite linear;
+      box-shadow: 0 0 16px currentColor;
+    }
+
+    .flow-line::after {
+      animation-delay: 0.8s;
+    }
+
+    .flow.purple { color: var(--purple); }
+    .flow.blue { color: var(--blue); }
+    .flow.green { color: var(--green); }
+    .flow.orange { color: var(--orange); }
+
+    .arrow-head {
+      font-size: 58px;
+      font-weight: 950;
+      line-height: 1;
+      animation: pulseArrow 1.3s infinite ease-in-out;
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    .flow-label {
+      position: absolute;
+      top: calc(50% + 42px);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: currentColor;
+    }
+
+    .bottom-flow {
+      margin-top: 26px;
+      border: 1px solid rgba(14, 165, 233, 0.24);
+      border-radius: 22px;
+      padding: 17px 20px;
+      background: rgba(255,255,255,0.84);
+      box-shadow: 0 14px 38px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      font-weight: 850;
+    }
+
+    .bottom-flow .dots {
+      color: var(--blue);
+      letter-spacing: 3px;
+      animation: shimmer 1.2s infinite linear;
+    }
+
+    .bottom-flow .label {
+      font-size: 20px;
+      color: #08122f;
+      font-weight: 950;
+    }
+
+    .stage-tag {
+      display: inline-flex;
+      margin-top: 12px;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px dashed rgba(15, 23, 42, 0.18);
+      background: rgba(255, 255, 255, 0.62);
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .loop {
+      position: relative;
+      min-height: 506px;
+      margin-top: 4px;
+    }
+
+    .loop-card {
+      position: absolute;
+      width: 44%;
+      min-height: 125px;
+      margin: 0;
+      display: block;
+      padding: 14px;
+      z-index: 2;
+    }
+
+    .loop-card strong {
+      font-size: 15px;
+    }
+
+    .loop-card ul {
+      margin: 8px 0 0 17px;
+      padding: 0;
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .loop-card.top { left: 28%; top: 0; }
+    .loop-card.right { right: 0; top: 160px; }
+    .loop-card.bottom { left: 28%; bottom: 0; }
+    .loop-card.left { left: 0; top: 160px; }
+
+    .loop-arrows {
+      position: absolute;
+      inset: 80px 18px 80px;
+      border: 6px solid rgba(249, 115, 22, 0.24);
+      border-radius: 999px;
+      animation: glowLoop 1.8s infinite ease-in-out;
+    }
+
+    .loop-arrows::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--orange);
+      top: -11px;
+      left: 50%;
+      box-shadow: 0 0 20px var(--orange);
+      animation: orbit 3.8s linear infinite;
+    }
+
+    dialog {
+      border: none;
+      border-radius: 26px;
+      padding: 0;
+      width: min(920px, calc(100vw - 28px));
+      max-height: 88vh;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 35px 90px rgba(15, 23, 42, 0.36);
+    }
+
+    dialog::backdrop {
+      background: rgba(15, 23, 42, 0.56);
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-header {
+      padding: 22px 26px;
+      color: #fff;
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-title-wrap h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-title-wrap p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      line-height: 1.35;
+      opacity: 0.9;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.42);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      font-size: 25px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 24px 28px 28px;
+      overflow-y: auto;
+      max-height: calc(88vh - 95px);
+    }
+
+    .modal-body h3 {
+      margin: 22px 0 8px;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .modal-body h3:first-child {
+      margin-top: 0;
+    }
+
+    .modal-body p,
+    .modal-body li {
+      color: #334155;
+      font-size: 15px;
+      line-height: 1.62;
+      font-weight: 550;
+    }
+
+    .modal-body ul {
+      padding-left: 20px;
+    }
+
+    .modal-body code {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #0f172a;
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-weight: 800;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .mini-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 13px;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .mini-card span {
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .modal-footer {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 750;
+    }
+
+    @keyframes moveDot {
+      from { transform: translateX(-30px); }
+      to { transform: translateX(110px); }
+    }
+
+    @keyframes pulseArrow {
+      0%, 100% { transform: translateX(0) scale(1); opacity: 0.75; }
+      50% { transform: translateX(6px) scale(1.08); opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(-2px); }
+      50% { transform: translateY(3px); }
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes glowLoop {
+      0%, 100% { box-shadow: 0 0 0 rgba(249, 115, 22, 0.0); }
+      50% { box-shadow: 0 0 24px rgba(249, 115, 22, 0.25); }
+    }
+
+    @keyframes orbit {
+      0% { transform: rotate(0deg) translateX(115px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(115px) rotate(-360deg); }
+    }
+
+    @media (max-width: 1180px) {
+      .diagram {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .flow {
+        min-height: 54px;
+        transform: rotate(90deg);
+      }
+
+      .flow-label {
+        display: none;
+      }
+
+      .stage {
+        min-height: auto;
+      }
+
+      .loop {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page { padding: 24px 12px 32px; }
+      .profile-grid, .mini-grid { grid-template-columns: 1fr; }
+      .loop {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: auto;
+      }
+      .loop-card {
+        position: relative;
+        width: 100%;
+        inset: auto !important;
+      }
+      .loop-arrows { display: none; }
+      .modal-title-wrap h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>Agentic Sionna Link Adaptation Mini-Lab</h1>
+      <p>Sionna PHY + LDPC BLER + MCS Strategy Leaderboard + LLM Orchestration</p>
+      <div class="legend">
+        <span class="pill">Click any block to open the explanation</span>
+        <span class="pill">Animated arrows show project flow</span>
+        <span class="pill">Built to mimic the NVLabs-style idea → evaluate → leaderboard loop</span>
+      </div>
+    </section>
+
+    <section class="diagram" aria-label="Interactive project architecture diagram">
+      <div class="stage purple">
+        <div class="stage-header">1) Concept Layer</div>
+        <div class="stage-body">
+          <div class="box" data-topic="concept-sinr">
+            <div class="icon">↗</div>
+            <div class="box-text"><strong>SINR → CQI → MCS</strong><span>Build the RF control chain before Sionna simulation.</span></div>
+          </div>
+          <div class="box" data-topic="concept-harq">
+            <div class="icon">✓×</div>
+            <div class="box-text"><strong>HARQ ACK/NACK</strong><span>Use success/failure feedback as the reliability signal.</span></div>
+          </div>
+          <div class="box" data-topic="concept-olla">
+            <div class="icon">≋</div>
+            <div class="box-text"><strong>OLLA Adjustment</strong><span>Move MCS aggressiveness up/down to target BLER.</span></div>
+          </div>
+          <div class="note" data-topic="concept-layer">Build intuition for link adaptation behavior before running full PHY simulations.</div>
+        </div>
+      </div>
+
+      <div class="flow purple">
+        <div class="flow-line"></div>
+        <div class="arrow-head">➜</div>
+        <div class="flow-label">control<br>logic</div>
+      </div>
+
+      <div class="stage blue">
+        <div class="stage-header">2) Sionna PHY Simulation</div>
+        <div class="stage-body pipeline">
+          <div class="box" data-topic="binary-source"><div class="icon">01</div><div class="box-text"><strong>Random Information Bits</strong><span>Payload bits used as the source data.</span></div></div>
+          <div class="down-arrow">↓</div>
+          <div class="box" data-topic="ldpc-encoder"><div class="icon">▣</div><div class="box-text"><strong>5G LDPC Encoder</strong><span>Adds coding redundancy for error correction.</span></div></div>
+          <div class="down-arrow">↓</div>
+          <div class="box" data-topic="qam-mapper"><div class="icon">✣</div><div class="box-text"><strong>QAM Mapper</strong><span>Maps coded bits to QPSK/16QAM/64QAM/256QAM symbols.</span></div></div>
+          <div class="down-arrow">↓</div>
+          <div class="box" data-topic="awgn-channel"><div class="icon">≈</div><div class="box-text"><strong>AWGN Channel</strong><span>Adds controlled noise to represent radio quality.</span></div></div>
+          <div class="down-arrow">↓</div>
+          <div class="box" data-topic="demapper"><div class="icon">▽</div><div class="box-text"><strong>Soft Demapper</strong><span>Converts noisy symbols into soft LLR confidence values.</span></div></div>
+          <div class="down-arrow">↓</div>
+          <div class="box" data-topic="ldpc-decoder"><div class="icon">☑</div><div class="box-text"><strong>5G LDPC Decoder</strong><span>Attempts to recover original information bits.</span></div></div>
+          <div class="down-arrow">↓</div>
+          <div class="box" data-topic="ber-bler"><div class="icon">⌁</div><div class="box-text"><strong>BER / BLER Curves</strong><span>Measure bit and block reliability versus Eb/N0.</span></div></div>
+          <button class="stage-tag" data-topic="sionna-stage">Actual Sionna PHY blocks</button>
+        </div>
+      </div>
+
+      <div class="flow blue">
+        <div class="flow-line"></div>
+        <div class="arrow-head">➜</div>
+        <div class="flow-label">simulate<br>MCS-like<br>profiles</div>
+      </div>
+
+      <div class="stage green">
+        <div class="stage-header">3) MCS Profile Library</div>
+        <div class="stage-body">
+          <div class="profile-grid">
+            <div class="box profile" data-topic="profile-qpsk-030"><div class="box-text"><strong>QPSK<br>R0.30</strong></div></div>
+            <div class="box profile" data-topic="profile-qpsk-050"><div class="box-text"><strong>QPSK<br>R0.50</strong></div></div>
+            <div class="box profile" data-topic="profile-16qam-045"><div class="box-text"><strong>16QAM<br>R0.45</strong></div></div>
+            <div class="box profile" data-topic="profile-16qam-060"><div class="box-text"><strong>16QAM<br>R0.60</strong></div></div>
+            <div class="box profile" data-topic="profile-64qam-050"><div class="box-text"><strong>64QAM<br>R0.50</strong></div></div>
+            <div class="box profile" data-topic="profile-64qam-065"><div class="box-text"><strong>64QAM<br>R0.65</strong></div></div>
+            <div class="box profile" data-topic="profile-64qam-080"><div class="box-text"><strong>64QAM<br>R0.80</strong></div></div>
+            <div class="box profile" data-topic="profile-256qam-070"><div class="box-text"><strong>256QAM<br>R0.70</strong></div></div>
+            <div class="box profile" data-topic="profile-256qam-085" style="grid-column: 1 / -1; width: 54%; margin: 0 auto;"><div class="box-text"><strong>256QAM<br>R0.85</strong></div></div>
+          </div>
+          <div class="note" data-topic="profile-library">For each profile: BLER, raw SE, effective SE, and 10% BLER threshold.</div>
+        </div>
+      </div>
+
+      <div class="flow green">
+        <div class="flow-line"></div>
+        <div class="arrow-head">➜</div>
+        <div class="flow-label">evaluate<br>candidate<br>policies</div>
+      </div>
+
+      <div class="stage orange">
+        <div class="stage-header">4) Strategy Optimization Loop</div>
+        <div class="stage-body">
+          <div class="loop">
+            <div class="loop-arrows"></div>
+            <div class="box loop-card top" data-topic="candidate-strategies">
+              <strong>Candidate Strategies</strong>
+              <ul>
+                <li>Conservative</li>
+                <li>Aggressive</li>
+                <li>Highest SE under BLER</li>
+                <li>Penalty-based</li>
+              </ul>
+            </div>
+            <div class="box loop-card right" data-topic="evaluation-tool">
+              <strong>Evaluation Tool</strong>
+              <ul>
+                <li>Runs strategy</li>
+                <li>Calculates score</li>
+                <li>Returns SUCCESS, metric</li>
+              </ul>
+            </div>
+            <div class="box loop-card bottom" data-topic="leaderboard">
+              <strong>Leaderboard</strong>
+              <ul>
+                <li>Ranks strategies</li>
+                <li>Tracks SE, BLER, violations</li>
+                <li>Shows best policy</li>
+              </ul>
+            </div>
+            <div class="box loop-card left" data-topic="orchestrator">
+              <strong>Orchestrator</strong>
+              <ul>
+                <li>Rule-based Gen 2</li>
+                <li>LLM Gen 3</li>
+                <li>Proposes new ideas</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow orange">
+        <div class="flow-line"></div>
+        <div class="arrow-head">➜</div>
+        <div class="flow-label">deduplicate<br>equivalent<br>behaviors</div>
+      </div>
+
+      <div class="stage red">
+        <div class="stage-header">5) Best Unique Policy</div>
+        <div class="stage-body">
+          <div class="result-card" data-topic="best-policy">
+            <div class="star">★</div>
+            <div class="metric"><div class="metric-label">Best Strategy</div><div class="metric-value" style="font-size: 19px;">Highest SE Under BLER Target</div></div>
+            <div class="metric"><div class="metric-label">Avg Effective SE</div><div class="metric-value">≈ 4.75 bits/s/Hz</div></div>
+            <div class="metric"><div class="metric-label">Avg BLER</div><div class="metric-value">≈ 9.21%</div></div>
+            <div class="metric"><div class="metric-label">BLER Violation Rate</div><div class="metric-value">≈ 11.43%</div></div>
+            <div class="metric"><div class="metric-label">Selected Profiles</div><div class="metric-value">9 unique MCS profiles</div></div>
+          </div>
+          <div class="note" data-topic="final-meaning">Choose the highest usable MCS while keeping BLER near target.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom-flow" data-topic="whole-project">
+      <span class="dots">● ● ● ➜</span>
+      <span class="label">Project Flow:</span>
+      <span style="color: var(--purple)">Concept Model</span>
+      <span>→</span>
+      <span style="color: var(--blue)">Sionna PHY Simulation</span>
+      <span>→</span>
+      <span style="color: var(--green)">LDPC BLER Curves</span>
+      <span>→</span>
+      <span style="color: var(--orange)">Strategy Leaderboard</span>
+      <span>→</span>
+      <span style="color: #d97706">LLM/Rule-Based Optimization</span>
+      <span>→</span>
+      <span style="color: var(--red)">Best Policy</span>
+      <span class="dots">➜ ● ● ●</span>
+    </section>
+  </main>
+
+  <dialog id="detailDialog">
+    <div class="modal-header" id="modalHeader">
+      <div class="modal-title-wrap">
+        <h2 id="modalTitle"></h2>
+        <p id="modalSubtitle"></p>
+      </div>
+      <button class="close-btn" id="closeDialog" aria-label="Close dialog">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </dialog>
+
+  <script>
+    const topics = {
+      "whole-project": {
+        color: "linear-gradient(135deg, #0f172a, #2563eb)",
+        title: "Whole Project Story",
+        subtitle: "How all modules connect into one resume-ready mini-lab.",
+        html: `
+          <h3>What this project does</h3>
+          <p>This project builds a small but complete link-adaptation optimizer. It starts with RF concepts, uses Sionna PHY to simulate LDPC-coded BLER curves, evaluates multiple MCS-selection strategies, ranks them on a leaderboard, then deduplicates equivalent behaviors to identify the best unique policy.</p>
+          <h3>Simple story</h3>
+          <ul>
+            <li><strong>Concept layer:</strong> understand SINR, CQI, MCS, HARQ, and OLLA.</li>
+            <li><strong>Sionna PHY layer:</strong> simulate actual bit transmission through LDPC, QAM, AWGN, demapper, and decoder blocks.</li>
+            <li><strong>MCS library:</strong> create multiple MCS-like profiles using modulation order and code rate.</li>
+            <li><strong>Optimization layer:</strong> evaluate candidate strategies using spectral efficiency and BLER control.</li>
+            <li><strong>Best policy:</strong> choose the highest usable MCS while keeping BLER near target.</li>
+          </ul>
+          <h3>How this mimics the NVLabs README idea</h3>
+          <p>The NVLabs-style workflow is idea generation → candidate algorithms → evaluation tool → leaderboard → next-generation ideas. This mini-lab mimics that pattern for a focused link-adaptation task, without the complexity of full Docker-based parallel agent execution.</p>
+          <div class="modal-footer">Resume positioning: Sionna PHY + LDPC BLER + MCS optimization + leaderboard + LLM/rule-based orchestration.</div>
+        `
+      },
+      "concept-layer": {
+        color: "linear-gradient(135deg, #6d28d9, #9333ea)",
+        title: "Concept Layer",
+        subtitle: "The RF logic we built before using full PHY simulation.",
+        html: `
+          <h3>Purpose</h3>
+          <p>The concept layer builds the intuition behind link adaptation. Before using Sionna PHY, we modeled the control behavior using simplified Python logic: SINR drives CQI, CQI maps to MCS, and ACK/NACK feedback adjusts scheduler aggressiveness through OLLA.</p>
+          <h3>Why this layer matters</h3>
+          <p>Without this layer, the Sionna simulation would only produce curves. This layer explains why those curves matter to real RAN optimization.</p>
+          <div class="mini-grid">
+            <div class="mini-card"><strong>SINR</strong><span>Radio quality indicator. Higher SINR usually supports higher CQI/MCS.</span></div>
+            <div class="mini-card"><strong>CQI</strong><span>UE-reported channel quality recommendation, derived from channel conditions.</span></div>
+            <div class="mini-card"><strong>MCS</strong><span>Scheduler decision: modulation order plus coding rate.</span></div>
+            <div class="mini-card"><strong>OLLA</strong><span>Outer-loop correction that moves MCS up or down based on BLER feedback.</span></div>
+          </div>
+        `
+      },
+      "concept-sinr": {
+        color: "linear-gradient(135deg, #6d28d9, #9333ea)",
+        title: "SINR → CQI → MCS",
+        subtitle: "The core link adaptation chain.",
+        html: `
+          <h3>Concept</h3>
+          <p>The real scheduler does not normally jump directly from SINR to MCS. The more realistic chain is: measured radio quality influences CQI, and the scheduler uses CQI plus its own logic to select MCS.</p>
+          <h3>In this project</h3>
+          <ul>
+            <li>We first built a simplified SINR/CQI/MCS model.</li>
+            <li>Then we used Sionna to generate BLER behavior for MCS-like profiles.</li>
+            <li>The strategy evaluator chooses the best MCS-like profile based on BLER and spectral efficiency.</li>
+          </ul>
+          <h3>Technical terms</h3>
+          <p><code>SINR</code> is the physical quality. <code>CQI</code> is the UE's compressed recommendation. <code>MCS</code> is the scheduler's final selection of modulation and coding rate.</p>
+        `
+      },
+      "concept-harq": {
+        color: "linear-gradient(135deg, #6d28d9, #9333ea)",
+        title: "HARQ ACK/NACK",
+        subtitle: "The feedback signal that reveals whether MCS was too aggressive.",
+        html: `
+          <h3>Concept</h3>
+          <p>HARQ feedback tells the scheduler whether the transport block was decoded successfully. ACK means success; NACK means failure or retransmission needed.</p>
+          <h3>Why it matters for MCS</h3>
+          <ul>
+            <li>Too many ACKs and very low BLER can mean the scheduler is too conservative.</li>
+            <li>Too many NACKs can mean MCS is too aggressive or channel conditions are poor.</li>
+            <li>OLLA uses ACK/NACK trends to adjust future MCS decisions.</li>
+          </ul>
+          <h3>Project role</h3>
+          <p>In the concept model, ACK/NACK was simulated statistically. In the Sionna layer, BLER is measured by comparing decoded information blocks against original blocks.</p>
+        `
+      },
+      "concept-olla": {
+        color: "linear-gradient(135deg, #6d28d9, #9333ea)",
+        title: "OLLA Adjustment",
+        subtitle: "Outer-loop link adaptation logic.",
+        html: `
+          <h3>Concept</h3>
+          <p>OLLA stands for Outer Loop Link Adaptation. It adjusts the scheduler's aggressiveness so BLER stays close to a target, commonly around 10% for initial transmissions.</p>
+          <h3>Behavior</h3>
+          <ul>
+            <li><strong>NACKs increase:</strong> reduce aggressiveness and back off MCS.</li>
+            <li><strong>ACKs dominate:</strong> increase aggressiveness and allow higher MCS.</li>
+            <li><strong>Target:</strong> balance throughput and reliability.</li>
+          </ul>
+          <h3>Project role</h3>
+          <p>We modeled OLLA in the early concept layer. Later, the leaderboard strategies approximate different ways of being conservative, aggressive, or penalty-based around BLER control.</p>
+        `
+      },
+      "sionna-stage": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "Sionna PHY Simulation Stage",
+        subtitle: "Where the project becomes a real Sionna-based simulation.",
+        html: `
+          <h3>Purpose</h3>
+          <p>This stage uses actual Sionna PHY blocks to simulate a digital communication link. It moves the project beyond synthetic BLER assumptions.</p>
+          <h3>Simulation chain</h3>
+          <p>Information bits are encoded with LDPC, mapped to QAM symbols, passed through AWGN, demapped into soft LLRs, decoded, and then compared with the original bits to calculate BER and BLER.</p>
+          <h3>Why it matters</h3>
+          <p>MCS is modulation plus coding rate. Using Sionna LDPC-coded BLER curves lets us evaluate MCS-like profiles more realistically than a hand-written BLER curve.</p>
+        `
+      },
+      "binary-source": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "Random Information Bits",
+        subtitle: "The payload source for the simulated link.",
+        html: `
+          <h3>What it is</h3>
+          <p>Random information bits represent the payload entering the physical layer. In a real 5G stack, these bits would come from higher layers as transport blocks. In this mini-lab, they are generated for simulation.</p>
+          <h3>Why random bits?</h3>
+          <p>Random bits let us statistically measure how often the link fails under different Eb/N0, modulation, and code-rate conditions.</p>
+        `
+      },
+      "ldpc-encoder": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "5G LDPC Encoder",
+        subtitle: "Adds redundancy so the receiver can correct errors.",
+        html: `
+          <h3>What LDPC does</h3>
+          <p>LDPC coding adds structured redundancy to the information bits. The receiver uses that redundancy to correct some errors caused by noise.</p>
+          <h3>Connection to MCS</h3>
+          <p>Code rate is part of MCS. A low code rate adds more redundancy and is more robust. A high code rate adds less redundancy, increases throughput, but needs cleaner RF conditions.</p>
+          <h3>Example</h3>
+          <p>QPSK R0.50 means QPSK modulation with about half the transmitted coded bits carrying useful information. 256QAM R0.85 means high modulation and high code rate, so it gives high spectral efficiency but requires higher Eb/N0.</p>
+        `
+      },
+      "qam-mapper": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "QAM Mapper",
+        subtitle: "Converts coded bits into modulation symbols.",
+        html: `
+          <h3>What it does</h3>
+          <p>The QAM mapper groups bits and maps them to constellation points.</p>
+          <div class="mini-grid">
+            <div class="mini-card"><strong>QPSK / 4-QAM</strong><span>2 bits per symbol, robust at low Eb/N0.</span></div>
+            <div class="mini-card"><strong>16QAM</strong><span>4 bits per symbol, needs better quality.</span></div>
+            <div class="mini-card"><strong>64QAM</strong><span>6 bits per symbol, higher throughput.</span></div>
+            <div class="mini-card"><strong>256QAM</strong><span>8 bits per symbol, highest SE but most sensitive.</span></div>
+          </div>
+          <p>Higher QAM order improves raw spectral efficiency but reduces constellation spacing, so it requires stronger channel quality.</p>
+        `
+      },
+      "awgn-channel": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "AWGN Channel",
+        subtitle: "A controlled noisy link used for the first PHY experiments.",
+        html: `
+          <h3>What it does</h3>
+          <p>AWGN stands for Additive White Gaussian Noise. The channel adds random noise to the transmitted QAM symbols.</p>
+          <h3>Why AWGN first?</h3>
+          <p>AWGN is the cleanest link-level baseline. It isolates the effect of modulation, coding rate, and Eb/N0 without adding multipath, Doppler, OFDM, MIMO, or channel estimation error.</p>
+          <h3>Limitation</h3>
+          <p>AWGN is not a full field environment. Later upgrades could add fading channels, OFDM, PUSCH/PDSCH, MIMO, and channel estimation.</p>
+        `
+      },
+      "demapper": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "Soft Demapper",
+        subtitle: "Turns noisy symbols into LLR confidence values.",
+        html: `
+          <h3>What it does</h3>
+          <p>The demapper observes noisy received symbols and estimates the probability of each bit being 0 or 1. It outputs soft values called LLRs, or log-likelihood ratios.</p>
+          <h3>Why soft values matter</h3>
+          <p>The LDPC decoder works better with soft confidence values than with hard 0/1 decisions. A bit with weak confidence can be corrected using parity relationships from the LDPC code.</p>
+        `
+      },
+      "ldpc-decoder": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "5G LDPC Decoder",
+        subtitle: "Attempts to recover the original information block.",
+        html: `
+          <h3>What it does</h3>
+          <p>The decoder uses LLRs and LDPC parity structure to recover the original information bits.</p>
+          <h3>BLER calculation</h3>
+          <p>After decoding, the project compares decoded bits against original information bits. If any bit in a block is wrong, that block is counted as a block error.</p>
+          <h3>Why this is important</h3>
+          <p>BLER is closer to real link adaptation than uncoded BER because 5G scheduling works with coded blocks and HARQ feedback.</p>
+        `
+      },
+      "ber-bler": {
+        color: "linear-gradient(135deg, #0369a1, #0ea5e9)",
+        title: "BER / BLER Curves",
+        subtitle: "Reliability measurements versus Eb/N0.",
+        html: `
+          <h3>BER</h3>
+          <p>BER is bit error rate: wrong bits divided by total transmitted bits.</p>
+          <h3>BLER</h3>
+          <p>BLER is block error rate: failed blocks divided by total blocks. A block fails if any information bit remains wrong after decoding.</p>
+          <h3>Project role</h3>
+          <p>For each MCS-like profile, the project simulates BLER versus Eb/N0 and finds the approximate Eb/N0 where BLER reaches the 10% target. This becomes the basis for MCS selection.</p>
+        `
+      },
+      "profile-library": {
+        color: "linear-gradient(135deg, #166534, #22c55e)",
+        title: "MCS Profile Library",
+        subtitle: "The candidate modulation + code-rate options.",
+        html: `
+          <h3>What a profile means</h3>
+          <p>Each profile is an MCS-like combination of modulation order and code rate. It is not claiming to be a complete 3GPP MCS table; it is a controlled simulation set for the mini-lab.</p>
+          <h3>What was measured</h3>
+          <ul>
+            <li><strong>Raw SE:</strong> bits per symbol × code rate.</li>
+            <li><strong>BLER curve:</strong> block error rate versus Eb/N0.</li>
+            <li><strong>Effective SE:</strong> raw SE × successful block probability.</li>
+            <li><strong>10% BLER threshold:</strong> approximate Eb/N0 where the profile becomes usable.</li>
+          </ul>
+          <h3>Observed threshold behavior</h3>
+          <p>Lower profiles such as QPSK become usable at lower Eb/N0. Higher profiles such as 256QAM R0.85 need much higher Eb/N0. That monotonic behavior validates the simulation logic.</p>
+        `
+      },
+      "profile-qpsk-030": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "QPSK R0.30", subtitle: "Very robust low-throughput profile.", html: `<p>QPSK with a low code rate gives strong protection and low spectral efficiency. It is useful when radio quality is poor and reliability is more important than throughput.</p>` },
+      "profile-qpsk-050": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "QPSK R0.50", subtitle: "Robust low-MCS profile.", html: `<p>QPSK R0.50 is still robust but has higher raw spectral efficiency than R0.30. In the expanded threshold table, QPSK profiles reached the 10% BLER target at low Eb/N0.</p>` },
+      "profile-16qam-045": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "16QAM R0.45", subtitle: "Low-medium MCS profile.", html: `<p>16QAM increases bits per symbol from 2 to 4, improving spectral efficiency but requiring better Eb/N0 than QPSK. A lower code rate keeps it moderately robust.</p>` },
+      "profile-16qam-060": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "16QAM R0.60", subtitle: "Medium MCS profile.", html: `<p>This profile is more aggressive than 16QAM R0.45 because it uses a higher code rate. It improves raw SE but shifts the 10% BLER threshold upward.</p>` },
+      "profile-64qam-050": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "64QAM R0.50", subtitle: "Medium-high MCS profile.", html: `<p>64QAM carries 6 bits per symbol. With rate 0.50, it provides a balanced step into higher spectral efficiency while maintaining some coding protection.</p>` },
+      "profile-64qam-065": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "64QAM R0.65", subtitle: "High MCS profile.", html: `<p>64QAM R0.65 increases useful throughput but needs stronger Eb/N0. It is a good example of the spectral-efficiency versus BLER tradeoff.</p>` },
+      "profile-64qam-080": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "64QAM R0.80", subtitle: "Very high 64QAM profile.", html: `<p>64QAM R0.80 is aggressive because it uses less redundancy. It can give high effective SE at good Eb/N0 but becomes risky near threshold regions.</p>` },
+      "profile-256qam-070": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "256QAM R0.70", subtitle: "High-order modulation profile.", html: `<p>256QAM carries 8 bits per symbol and needs strong channel quality. It is useful in high-Eb/N0 conditions where QPSK/16QAM/64QAM would leave capacity on the table.</p>` },
+      "profile-256qam-085": { color: "linear-gradient(135deg, #166534, #22c55e)", title: "256QAM R0.85", subtitle: "Highest simulated MCS-like profile.", html: `<p>This is the highest raw-SE profile in the mini-lab. It can produce the best throughput under strong conditions but is the most sensitive to BLER violations.</p>` },
+      "candidate-strategies": {
+        color: "linear-gradient(135deg, #c2410c, #f97316)",
+        title: "Candidate Strategies",
+        subtitle: "Different MCS-selection policies tested by the evaluator.",
+        html: `
+          <h3>Strategy examples</h3>
+          <ul>
+            <li><strong>Conservative Lowest BLER:</strong> picks the safest option, often wasting capacity.</li>
+            <li><strong>Aggressive Highest SE:</strong> picks the highest raw SE, often causing excessive BLER.</li>
+            <li><strong>Highest SE Under BLER Target:</strong> selects the highest profile that stays under target when possible.</li>
+            <li><strong>Penalty-based:</strong> balances raw SE against BLER violation penalties.</li>
+          </ul>
+          <h3>Why multiple strategies?</h3>
+          <p>This mimics the idea of agents exploring different algorithmic approaches. Some are conservative, some aggressive, and some balanced.</p>
+        `
+      },
+      "evaluation-tool": {
+        color: "linear-gradient(135deg, #c2410c, #f97316)",
+        title: "Evaluation Tool",
+        subtitle: "The judge that scores every candidate strategy.",
+        html: `
+          <h3>What it evaluates</h3>
+          <p>The evaluation tool runs each strategy across the available Eb/N0 points and selected MCS profile options.</p>
+          <h3>Metrics used</h3>
+          <ul>
+            <li>Average effective spectral efficiency</li>
+            <li>Average BLER</li>
+            <li>BLER violation rate</li>
+            <li>BLER violation magnitude</li>
+            <li>Distance from target BLER</li>
+          </ul>
+          <h3>README-style output</h3>
+          <p>The evaluator produces an output similar to <code>SUCCESS, score</code>, which matches the evaluation style used in the uploaded README concept.</p>
+        `
+      },
+      "leaderboard": {
+        color: "linear-gradient(135deg, #c2410c, #f97316)",
+        title: "Leaderboard",
+        subtitle: "Ranks candidate algorithms and exposes equivalent behavior.",
+        html: `
+          <h3>Purpose</h3>
+          <p>The leaderboard ranks all candidate MCS-selection strategies by score.</p>
+          <h3>What we learned</h3>
+          <p>Initially many strategies tied because they selected the same profiles. After expanding the MCS library and deduplicating by actual selected-profile sequence, the project produced 8 unique strategy behaviors.</p>
+          <h3>Why deduplication matters</h3>
+          <p>Different strategy names can produce the same decisions. Deduplication focuses on unique algorithm behavior, not just names.</p>
+        `
+      },
+      "orchestrator": {
+        color: "linear-gradient(135deg, #c2410c, #f97316)",
+        title: "Orchestrator",
+        subtitle: "Generates next-generation strategy candidates.",
+        html: `
+          <h3>Rule-based orchestrator</h3>
+          <p>The rule-based version reviewed leaderboard behavior and generated second-generation strategies with different safety factors and BLER penalties.</p>
+          <h3>LLM orchestrator</h3>
+          <p>The LLM version reviewed leaderboard summaries and proposed third-generation strategy configurations. Some LLM strategies matched the best behavior, while others became too aggressive.</p>
+          <h3>Relation to NVLabs style</h3>
+          <p>The full NVLabs framework uses an orchestrator LLM and multiple agents. This mini-lab implements a smaller version: orchestrator proposals plus local strategy evaluation and leaderboard ranking.</p>
+        `
+      },
+      "best-policy": {
+        color: "linear-gradient(135deg, #be123c, #f43f5e)",
+        title: "Best Unique Policy",
+        subtitle: "The final deduplicated winning behavior.",
+        html: `
+          <h3>Best strategy</h3>
+          <p>The best unique behavior is <strong>Highest SE Under BLER Target</strong>.</p>
+          <div class="mini-grid">
+            <div class="mini-card"><strong>Avg Effective SE</strong><span>≈ 4.75 bits/s/Hz</span></div>
+            <div class="mini-card"><strong>Avg BLER</strong><span>≈ 9.21%, close to the 10% target</span></div>
+            <div class="mini-card"><strong>BLER Violation Rate</strong><span>≈ 11.43% of evaluated Eb/N0 points</span></div>
+            <div class="mini-card"><strong>Selected Profiles</strong><span>9 unique MCS profiles used across conditions</span></div>
+          </div>
+          <h3>Meaning</h3>
+          <p>The best policy is not the safest and not the most aggressive. It picks the highest usable MCS profile while keeping BLER near target.</p>
+        `
+      },
+      "final-meaning": {
+        color: "linear-gradient(135deg, #be123c, #f43f5e)",
+        title: "Engineering Meaning of the Final Result",
+        subtitle: "Why the winning behavior makes RF sense.",
+        html: `
+          <h3>RF interpretation</h3>
+          <p>A scheduler that is too conservative leaves throughput on the table. A scheduler that is too aggressive creates excessive block errors and retransmissions. The best strategy balances spectral efficiency and reliability.</p>
+          <h3>Project conclusion</h3>
+          <p>The final result matches practical link-adaptation logic: choose the highest usable MCS under BLER control, with the average BLER kept close to the 10% target.</p>
+        `
+      }
+    };
+
+    const dialog = document.getElementById("detailDialog");
+    const modalHeader = document.getElementById("modalHeader");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalSubtitle = document.getElementById("modalSubtitle");
+    const modalBody = document.getElementById("modalBody");
+    const closeDialog = document.getElementById("closeDialog");
+
+    function openTopic(topicKey) {
+      const topic = topics[topicKey];
+      if (!topic) return;
+      modalHeader.style.background = topic.color;
+      modalTitle.textContent = topic.title;
+      modalSubtitle.textContent = topic.subtitle || "";
+      modalBody.innerHTML = topic.html + `<div class="modal-footer">Tip: Click another block in the diagram to explore the next part of the project story.</div>`;
+      dialog.showModal();
+    }
+
+    document.querySelectorAll("[data-topic]").forEach((el) => {
+      el.addEventListener("click", () => openTopic(el.dataset.topic));
+    });
+
+    closeDialog.addEventListener("click", () => dialog.close());
+
+    dialog.addEventListener("click", (event) => {
+      const rect = dialog.getBoundingClientRect();
+      const clickedOutside =
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom;
+      if (clickedOutside) dialog.close();
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && dialog.open) dialog.close();
+    });
+  </script>
+</body>
+</html>
