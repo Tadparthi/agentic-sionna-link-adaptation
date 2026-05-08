@@ -1,0 +1,7 @@
+sionna>=2.0.1
+torch
+numpy
+pandas
+matplotlib
+openai
+jupyter
