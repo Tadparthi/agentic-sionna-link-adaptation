@@ -57,6 +57,9 @@ Results are saved in `results/`:
 
 Open `html/sionna_link_adaptation_interactive.html` in a browser and click each block to see project/module explanations.
 
-## Resume Bullet
+## Key Takeaways
 
-Built an agentic Sionna link adaptation mini-lab that simulates 5G LDPC-coded BLER curves for MCS-like modulation and code-rate profiles, evaluates multiple MCS-selection strategies through a leaderboard, and identifies the best policy for maximizing spectral efficiency under BLER constraints.
+- Sionna PHY can be used to generate LDPC-coded BLER curves for MCS-like profiles.
+- Higher modulation and higher code rate improve raw spectral efficiency but require higher Eb/N0.
+- A balanced MCS-selection policy outperforms both overly conservative and overly aggressive  strategies.
+- Deduplicating strategy behavior helps identify truly unique algorithmic policies.
