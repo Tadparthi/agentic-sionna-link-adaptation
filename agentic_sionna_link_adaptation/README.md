@@ -55,7 +55,25 @@ Results are saved in `results/`:
 
 ## Interactive Diagram
 
-Open `html/sionna_link_adaptation_interactive.html` in a browser and click each block to see project/module explanations.
+## Interactive Project Diagram
+
+Open the live interactive block diagram here:
+
+https://YOUR_USERNAME.github.io/agentic-sionna-link-adaptation/
+
+The diagram explains the full project flow:
+
+- Concept model: SINR → CQI → MCS → HARQ/OLLA
+- Sionna PHY simulation chain
+- LDPC-coded BLER curves
+- MCS profile library
+- Strategy evaluator and leaderboard
+- Rule-based / LLM orchestration
+- Best unique MCS-selection policy
+
+You can also open the local file directly:
+
+html/sionna_link_adaptation_interactive.html
 
 ## Key Takeaways
 
