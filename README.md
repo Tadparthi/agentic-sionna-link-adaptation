@@ -168,8 +168,6 @@ Generated files are saved under `results/`:
 ---
 
 ## Strategy Evaluation
->>>>>>> c0b9d37 (Polish README structure and project summary)
-
 Each strategy is evaluated across available Eb/N0 points. The improved score considers:
 
 - Average effective spectral efficiency
@@ -187,12 +185,9 @@ Strategy evaluator and leaderboard
 Rule-based / LLM orchestration
 Best unique MCS-selection policy
 =======
----
->>>>>>> c0b9d37 (Polish README structure and project summary)
 
 ## Why Deduplication Matters
 
-<<<<<<< HEAD
 html/sionna_link_adaptation_interactive.html
 Architecture
 Concept Model:
@@ -201,13 +196,10 @@ SINR → CQI → MCS → HARQ ACK/NACK → OLLA
 Multiple strategy names can produce the same MCS decisions across all Eb/N0 points. The project deduplicates strategies by their actual selected-profile sequence so the final leaderboard ranks unique behaviors, not just strategy names.
 
 ---
->>>>>>> c0b9d37 (Polish README structure and project summary)
-
 Sionna PHY:
 Information bits → LDPC Encoder → QAM Mapper → AWGN Channel
 → Soft Demapper → LDPC Decoder → BER / BLER
 
-<<<<<<< HEAD
 Optimization:
 MCS profiles → candidate strategies → evaluator
 → leaderboard → orchestrator-generated candidates
