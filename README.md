@@ -2,7 +2,7 @@ Agentic Sionna Link Adaptation Mini-Lab
 
 A compact 5G link adaptation mini-lab built with **Sionna PHY** to simulate LDPC-coded BLER curves, evaluate MCS-selection strategies, and identify the best policy for maximizing spectral efficiency under BLER constraints.
 
-<<<<<<< HEAD
+
 Objective
 
 Given radio quality / Eb/N0, choose the highest usable MCS-like profile while keeping BLER near a 10% target.
@@ -12,9 +12,6 @@ In practical RF terms, this project studies the link adaptation tradeoff between
 Conservative MCS selection, which protects BLER but may waste capacity
 Aggressive MCS selection, which improves raw spectral efficiency but may create excessive block errors
 Balanced MCS selection, which chooses the highest usable MCS under BLER control
-Live Interactive Diagram
-=======
----
 
 ## Live Interactive Diagram
 
@@ -182,7 +179,6 @@ Each strategy is evaluated across available Eb/N0 points. The improved score con
 
 This makes the evaluator prefer policies that achieve high throughput while maintaining reliability.
 
-<<<<<<< HEAD
 Concept model: SINR → CQI → MCS → HARQ/OLLA
 Sionna PHY simulation chain
 LDPC-coded BLER curves
