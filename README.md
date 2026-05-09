@@ -1,39 +1,32 @@
-Agentic Sionna Link Adaptation Mini-Lab
+# Agentic Sionna Link Adaptation Mini-Lab
 
 A compact 5G link adaptation mini-lab built with **Sionna PHY** to simulate LDPC-coded BLER curves, evaluate MCS-selection strategies, and identify the best policy for maximizing spectral efficiency under BLER constraints.
 
+---
 
-Objective
+## Live Demo
 
-Given radio quality / Eb/N0, choose the highest usable MCS-like profile while keeping BLER near a 10% target.
+Interactive project diagram:
 
-In practical RF terms, this project studies the link adaptation tradeoff between:
+[Open the live interactive diagram](https://Tadparthi.github.io/agentic-sionna-link-adaptation/)
 
-Conservative MCS selection, which protects BLER but may waste capacity
-Aggressive MCS selection, which improves raw spectral efficiency but may create excessive block errors
-Balanced MCS selection, which chooses the highest usable MCS under BLER control
-
-## Live Interactive Diagram
-
-Open the interactive project diagram:
-
-**https://Tadparthi.github.io/agentic-sionna-link-adaptation/**
-
-The diagram explains the full project flow, including the concept model, Sionna PHY chain, LDPC-coded BLER simulation, MCS profile library, strategy leaderboard, orchestration loop, and final best policy.
+The diagram explains the concept model, Sionna PHY chain, LDPC-coded BLER simulation, MCS profile library, strategy leaderboard, orchestration loop, and final best policy.
 
 ---
 
 ## Project Objective
 
-The goal is to answer a practical link adaptation question:
+The project answers a practical link adaptation question:
 
 > Given radio quality / Eb/N0, which MCS-like profile should be selected to maximize spectral efficiency while keeping BLER near a 10% target?
 
-The project compares different scheduler-style behaviors:
+It compares three scheduler-style behaviors:
 
-- **Conservative selection**: protects BLER but may waste capacity
-- **Aggressive selection**: improves raw spectral efficiency but may cause excessive block errors
-- **Balanced selection**: chooses the highest usable MCS while keeping BLER under control
+| Behavior | Meaning |
+|---|---|
+| Conservative selection | Protects BLER but may waste capacity |
+| Aggressive selection | Improves raw spectral efficiency but may create excessive block errors |
+| Balanced selection | Chooses the highest usable MCS while keeping BLER under control |
 
 ---
 
@@ -56,9 +49,9 @@ MCS Profiles → Candidate Strategies → Evaluator → Leaderboard
 
 ## Key Results
 
-The best deduplicated MCS-selection behavior was:
+Best deduplicated MCS-selection behavior:
 
-### Highest SE Under BLER Target
+**Highest SE Under BLER Target**
 
 | Metric | Result |
 |---|---:|
@@ -67,13 +60,13 @@ The best deduplicated MCS-selection behavior was:
 | BLER violation rate | ~11.43% |
 | Unique MCS profiles selected | 9 |
 
-The result shows that the best policy was not the most conservative or the most aggressive. It selected the highest usable MCS-like profile while keeping average BLER close to the 10% target.
+The best policy was not the most conservative or the most aggressive. It selected the highest usable MCS-like profile while keeping average BLER close to the 10% target.
 
 ---
 
 ## MCS-like Profiles
 
-The project evaluates 9 simplified MCS-like profiles:
+The project evaluates 9 simplified MCS-like profiles.
 
 | Profile | Modulation | Code Rate |
 |---|---:|---:|
@@ -152,7 +145,7 @@ python main.py --with-llm
 
 ## Outputs
 
-Generated files are saved under `results/`:
+Generated files are saved under `results/`.
 
 | Output | Description |
 |---|---|
@@ -168,7 +161,10 @@ Generated files are saved under `results/`:
 ---
 
 ## Strategy Evaluation
-Each strategy is evaluated across available Eb/N0 points. The improved score considers:
+
+Each strategy is evaluated across available Eb/N0 points.
+
+The improved score considers:
 
 - Average effective spectral efficiency
 - BLER violation rate
@@ -177,114 +173,13 @@ Each strategy is evaluated across available Eb/N0 points. The improved score con
 
 This makes the evaluator prefer policies that achieve high throughput while maintaining reliability.
 
-Concept model: SINR → CQI → MCS → HARQ/OLLA
-Sionna PHY simulation chain
-LDPC-coded BLER curves
-MCS profile library
-Strategy evaluator and leaderboard
-Rule-based / LLM orchestration
-Best unique MCS-selection policy
-=======
+---
 
 ## Why Deduplication Matters
 
-html/sionna_link_adaptation_interactive.html
-Architecture
-Concept Model:
-SINR → CQI → MCS → HARQ ACK/NACK → OLLA
-=======
-Multiple strategy names can produce the same MCS decisions across all Eb/N0 points. The project deduplicates strategies by their actual selected-profile sequence so the final leaderboard ranks unique behaviors, not just strategy names.
+Multiple strategy names can produce the same MCS decisions across all Eb/N0 points.
 
----
-Sionna PHY:
-Information bits → LDPC Encoder → QAM Mapper → AWGN Channel
-→ Soft Demapper → LDPC Decoder → BER / BLER
-
-Optimization:
-MCS profiles → candidate strategies → evaluator
-→ leaderboard → orchestrator-generated candidates
-→ deduplicated best policy
-Key Results
-
-The best deduplicated MCS-selection behavior was:
-
-Highest SE Under BLER Target
-
-Final result from the expanded MCS profile experiment:
-
-Metric	Result
-Avg effective spectral efficiency	~4.75 bits/s/Hz
-Avg BLER	~9.21%
-BLER violation rate	~11.43%
-Unique MCS profiles selected	9
-
-The result shows that the best policy was not the most conservative or the most aggressive. It selected the highest usable MCS-like profile while keeping average BLER close to the 10% target.
-
-MCS-like Profiles
-
-The project evaluates 9 MCS-like profiles:
-
-QPSK R0.30
-QPSK R0.50
-16QAM R0.45
-16QAM R0.60
-64QAM R0.50
-64QAM R0.65
-64QAM R0.80
-256QAM R0.70
-256QAM R0.85
-
-These are simplified simulation profiles, not a full 3GPP MCS table.
-
-Technical Modules
-Module	Purpose
-mcs_profiles.py	Defines MCS-like profiles using modulation order, code rate, and Eb/N0 sweep ranges
-sionna_ldpc_sim.py	Runs Sionna LDPC-coded BLER simulations over AWGN
-strategies.py	Defines conservative, aggressive, BLER-target, margin, and penalty-based MCS-selection strategies
-evaluator.py	Scores each strategy using effective spectral efficiency, BLER violation rate, BLER excess, and distance from target
-orchestrator.py	Generates rule-based and optional LLM-proposed strategy candidates
-deduplicate.py	Groups strategies that make identical MCS-profile selections
-plotting.py	Generates BLER curve and leaderboard plots
-main.py	Runs the full project pipeline
-Quick Start
-pip install -r requirements.txt
-python main.py --fast
-
-For a fuller run:
-
-python main.py
-
-Reuse cached results:
-
-python main.py --use-cache
-
-Optional LLM generation:
-
-export OPENAI_API_KEY="your_key_here"
-python main.py --with-llm
-Outputs
-
-Results are saved in results/:
-
-expanded_sionna_ldpc_mcs_results.csv
-expanded_mcs_10pct_bler_threshold_table.csv
-expanded_mcs_strategy_leaderboard.csv
-expanded_mcs_strategy_selection_details.csv
-deduplicated_strategy_behavior_leaderboard.csv
-README_project_summary.md
-bler_curves.png
-leaderboard.png
-Key Takeaways
-Sionna PHY can be used to generate LDPC-coded BLER curves for MCS-like profiles.
-Higher modulation and higher code rate improve raw spectral efficiency but require higher Eb/N0.
-A balanced MCS-selection policy outperforms both overly conservative and overly aggressive strategies.
-Deduplicating strategy behavior helps identify truly unique algorithmic policies.
-=======
-- Sionna PHY can be used to generate LDPC-coded BLER curves for MCS-like profiles.
-- Higher modulation and higher code rate improve raw spectral efficiency but require higher Eb/N0.
-- A balanced MCS-selection policy outperforms both overly conservative and overly aggressive strategies.
-- Deduplicating strategy behavior helps identify truly unique algorithmic policies.
-- The final result aligns with practical link adaptation logic: select the highest usable MCS while keeping BLER near target.
+The project deduplicates strategies by their actual selected-profile sequence, so the final leaderboard ranks **unique behaviors** instead of only strategy names.
 
 ---
 
@@ -315,6 +210,16 @@ agentic-sionna-link-adaptation/
 
 ---
 
+## Key Takeaways
+
+- Sionna PHY can generate LDPC-coded BLER curves for MCS-like profiles.
+- Higher modulation and higher code rate improve raw spectral efficiency but require higher Eb/N0.
+- A balanced MCS-selection policy outperforms overly conservative and overly aggressive strategies.
+- Deduplicating strategy behavior helps identify truly unique algorithmic policies.
+- The final result aligns with practical link adaptation logic: select the highest usable MCS while keeping BLER near target.
+
+---
+
 ## Limitations
 
 - The MCS profiles are simplified and are not a full 3GPP MCS table.
@@ -330,9 +235,8 @@ Potential next steps:
 
 - Add fading channel models
 - Add OFDM resource grid simulation
-- Add more realistic CQI/MCS table mapping
+- Add realistic CQI/MCS table mapping
 - Compare AWGN versus fading BLER thresholds
 - Add HARQ retransmission modeling
 - Extend to PDSCH/PUSCH-style link-level simulation
 - Build a richer agentic optimization loop with multiple strategy generations
->>>>>>> c0b9d37 (Polish README structure and project summary)
