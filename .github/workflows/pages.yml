@@ -1,4 +1,4 @@
-name: Deploy static HTML to GitHub Pages
+﻿name: Deploy static HTML to GitHub Pages
 
 on:
   push:
